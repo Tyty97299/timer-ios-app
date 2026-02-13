@@ -27,21 +27,17 @@ xcodegen generate
 open TimerFuturiste.xcodeproj
 ```
 
-## Build IPA via CI (depuis Windows)
+## Build IPA via CI (depuis Windows, 100% gratuit)
 
-Configurer les secrets GitHub:
+Le workflow `Build iOS IPA` produit un `.ipa` **non signe** sur runner macOS GitHub, sans certificat Apple ni provisioning profile.
 
-- `APPLE_P12_BASE64`: certificat signing exporte en base64 (`.p12`)
-- `APPLE_P12_PASSWORD`: mot de passe du `.p12`
-- `APPLE_PROFILE_BASE64`: provisioning profile en base64 (`.mobileprovision`)
-- `APPLE_TEAM_ID`: Team ID Apple Developer
-
-Ensuite lancer le workflow `Build iOS IPA` dans GitHub Actions. L'artefact `.ipa` sera telechargeable depuis le run.
+1. Aller dans l'onglet `Actions` du repo GitHub.
+2. Lancer le workflow `Build iOS IPA` (`Run workflow`).
+3. Recuperer l'artefact `TimerFuturiste-unsigned-ipa`.
 
 ## Installation avec AltStore
 
-1. Telecharger l'artefact `.ipa` du workflow.
-2. Ouvrir AltStore sur iPhone.
-3. Importer le `.ipa`.
-4. Verifier les permissions notifications au premier lancement.
-
+1. Telecharger `TimerFuturiste-unsigned.ipa` depuis les artifacts du run.
+2. Ouvrir AltStore sur iPhone (meme Apple ID gratuit que AltServer).
+3. Importer le `.ipa` dans AltStore, qui resignera l'app automatiquement.
+4. Rafraichir l'app avant l'expiration (~7 jours en compte gratuit).

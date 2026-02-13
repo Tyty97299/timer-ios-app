@@ -11,8 +11,6 @@ jobs:
     env:
       SCHEME: TimerFuturiste
       PROJECT: TimerFuturiste.xcodeproj
-      ARCHIVE_PATH: build/TimerFuturiste.xcarchive
-      EXPORT_PATH: build/export
 
     steps:
       - name: Checkout
@@ -27,41 +25,50 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Import signing certificate
-        uses: apple-actions/import-codesign-certs@v2
-        with:
-          p12-file-base64: ${{ secrets.APPLE_P12_BASE64 }}
-          p12-password: ${{ secrets.APPLE_P12_PASSWORD }}
-
-      - name: Install provisioning profile
+      - name: Build app (unsigned)
         run: |
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          echo "${{ secrets.APPLE_PROFILE_BASE64 }}" | base64 --decode > "$HOME/Library/MobileDevice/Provisioning Profiles/timerfuturiste.mobileprovision"
-
-      - name: Prepare ExportOptions
-        run: |
-          sed "s/YOUR_TEAM_ID/${{ secrets.APPLE_TEAM_ID }}/g" ExportOptions.plist > build/ExportOptions.plist
-
-      - name: Archive app
-        run: |
-          xcodebuild archive \
+          set -euo pipefail
+          xcodebuild \
             -project "$PROJECT" \
             -scheme "$SCHEME" \
             -configuration Release \
+            -sdk iphoneos \
             -destination "generic/platform=iOS" \
-            -archivePath "$ARCHIVE_PATH"
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            clean build
 
-      - name: Export IPA
+      - name: Package unsigned IPA
         run: |
-          xcodebuild -exportArchive \
-            -archivePath "$ARCHIVE_PATH" \
-            -exportPath "$EXPORT_PATH" \
-            -exportOptionsPlist build/ExportOptions.plist
+          set -euo pipefail
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -path "*/Build/Products/Release-iphoneos/*.app" | head -n 1)
+          if [ -z "${APP_PATH:-}" ]; then
+            echo "No .app found in DerivedData Release-iphoneos output"
+            exit 1
+          fi
+
+          mkdir -p build/Payload
+          cp -R "$APP_PATH" build/Payload/
+          cd build
+          zip -r TimerFuturiste-unsigned.ipa Payload
+
+      - name: Verify IPA artifact
+        run: |
+          ls -lah build
+          unzip -l build/TimerFuturiste-unsigned.ipa | head -n 20
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TimerFuturiste-ipa
-          path: build/export/*.ipa
+          name: TimerFuturiste-unsigned-ipa
+          path: build/TimerFuturiste-unsigned.ipa
           if-no-files-found: error
 
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-logs
+          path: |
+            ~/Library/Developer/Xcode/DerivedData/**/Logs/Build/*.xcactivitylog
+          if-no-files-found: ignore
