@@ -1,0 +1,12 @@
+.DS_Store
+DerivedData/
+build/
+*.ipa
+*.xcworkspace
+*.xcodeproj
+!project.yml
+!ExportOptions.plist
+.env
+.idea/
+.vscode/
+
