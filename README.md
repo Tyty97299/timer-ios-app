@@ -1,6 +1,6 @@
-# Timer Futuriste (iOS 17+)
+# Timer Futuriste (iOS 16.1+)
 
-Application iOS SwiftUI de minuteur + chronometre, avec UI claire futuriste, notifications locales et Live Activity/Dynamic Island.
+Application iOS SwiftUI de minuteur + chronometre, avec UI claire futuriste, notifications locales et Live Activity/Dynamic Island (iOS 16.1+).
 
 ## Fonctionnalites V1
 

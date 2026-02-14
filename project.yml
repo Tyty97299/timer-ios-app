@@ -3,7 +3,7 @@ options:
   minimumXcodeGenVersion: 2.38.0
   xcodeVersion: "15.0"
   deploymentTarget:
-    iOS: "17.0"
+    iOS: "16.1"
   createIntermediateGroups: true
 settings:
   base:
@@ -18,7 +18,7 @@ targets:
   TimerFuturiste:
     type: application
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: "16.1"
     info:
       path: Sources/TimerFuturiste/Info.plist
     sources:
@@ -40,7 +40,7 @@ targets:
   TimerFuturisteLiveActivityExtension:
     type: app-extension
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: "16.1"
     info:
       path: Sources/TimerFuturisteLiveActivityExtension/Info.plist
     sources:
@@ -57,7 +57,7 @@ targets:
   TimerFuturisteTests:
     type: bundle.unit-test
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: "16.1"
     sources:
       - path: Tests/TimerFuturisteTests
       - path: Shared/LiveActivity
@@ -66,7 +66,7 @@ targets:
   TimerFuturisteUITests:
     type: bundle.ui-testing
     platform: iOS
-    deploymentTarget: "17.0"
+    deploymentTarget: "16.1"
     sources:
       - path: Tests/TimerFuturisteUITests
     dependencies:
